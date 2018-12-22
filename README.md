@@ -21,3 +21,40 @@
         确定路由是几级路由
     底部导航组件: FooterGuide
     导航路由组件: MSite/Search/Order/Profile
+    
+# day02
+## 1. 抽取组件
+    头部组件: NavHeader, 通过slot来实现组件通信标签结构
+    商家列表组件: ShopList
+    
+## 2. 登陆路由组件
+     静态组件
+     FooterGuide的显示/隐藏: 通过路由的meta
+     
+## 3. 后台应用
+    运行后台项目(启动mongodb服务), 
+    使用postman测试后台接口, 如果不一致, 修改接口文档
+        
+## 4. 异步显示数据
+    封装ajax: 
+        promise+axios封装ajax请求的函数
+        封装每个接口对应的请求函数(能根据接口定义ajax请求函数)
+        解决ajax的跨越域问题: 配置代理, 对代理的理解
+    vuex编码
+        创建所有相关的模块: store/index|state|mutations|actions|getters|mutation-types
+        设计state: 从后台获取的数据
+        实现actions: 
+            定义异步action: async/await
+            流程:　发ajax获取数据, commit给mutation
+        实现mutations: 给状态赋值
+        实现index: 创建store对象
+        main.js: 配置store
+    组件异步显示数据
+        在mounted()通过$store.dispatch('actionName')来异步获取后台数据到state中
+        mapState(['xxx'])读取state中数据到组件中
+        在模板中显示xxx的数据
+
+## 5. Star组件
+    创建组件, 设计组件的props
+    使用组件标签, 并传入相应的标签属性
+    完成组件编码
