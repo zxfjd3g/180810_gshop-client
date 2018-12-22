@@ -17,5 +17,7 @@
         $router: 路由器对象, 包含一些操作路由的功能函数, 来实现编程式导航(跳转路由)
         $route: 当前路由对象, 一些当前路由信息数据的容器, path/meta/query/params
     项目路由拆分
+        确定路由组件显示的区域
+        确定路由是几级路由
     底部导航组件: FooterGuide
     导航路由组件: MSite/Search/Order/Profile
