@@ -11,7 +11,7 @@
     </NavHeader>
     <!--首页导航-->
     <nav class="msite_nav">
-      <div class="swiper-container">
+      <div class="swiper-container" v-if="categorys.length>0">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(categorys, index) in categorysArr" :key="index">
             <a href="javascript:" class="link_to_food" v-for="(c, index) in categorys" :key="index">
@@ -25,6 +25,9 @@
         <!-- Add Pagination -->
         <div class="swiper-pagination"></div>
       </div>
+
+      <img src="./images/msite_back.svg" alt="back" v-else>
+      
     </nav>
     <!--首页附近商家-->
     <div class="msite_shop_list">
@@ -43,7 +46,12 @@
   import {mapState} from 'vuex'
   import ShopList from '../../components/ShopList/ShopList.vue'
 
+/*
+解决swiper在vue中不能轮播的bug
+  watch: 监视状态数据更新了
+  $nextTick(() => {}): 界面更新了, 在回调函数中创建swiper对象
 
+ */
 
   export default {
 
@@ -51,15 +59,18 @@
       // 异步获取商家列表数据(后台==>state)
       this.$store.dispatch('getShops')
       this.$store.dispatch('getCategorys')
-
-      // 创建swiper对象的时机: 列表数据显示之后
-      new Swiper('.swiper-container', { // 配置对象
-        loop: true, // 循环轮播
-        // 如果需要分页器
-        pagination: {
-          el: '.swiper-pagination',
-        },
-      })
+    /*  // 不太好
+      setTimeout(() => {
+        // 创建swiper对象的时机: 列表数据显示之后
+        new Swiper('.swiper-container', { // 配置对象
+          loop: true, // 循环轮播
+          // 如果需要分页器
+          pagination: {
+            el: '.swiper-pagination',
+          },
+        })
+      }, 3000)
+      */
     },
 
     computed: {
@@ -90,6 +101,23 @@
 
 
         return bigArr
+      }
+    },
+
+    watch: {
+      // 注意: vue在更新状态数据后 ==> 先调用监视的回调 ==> 异步更新界面
+      categorys () { // categorys重新赋值了, 有数据了(状态数据更新了)
+        // 将回调延迟到下次 DOM 更新循环之后执行。在修改数据之后立即使用它，然后等待 DOM 更新
+        this.$nextTick(() => {
+          // 创建swiper对象的时机: 列表数据显示之后
+          new Swiper('.swiper-container', { // 配置对象
+            loop: true, // 循环轮播
+            // 如果需要分页器
+            pagination: {
+              el: '.swiper-pagination',
+            },
+          })
+        })
       }
     },
 
