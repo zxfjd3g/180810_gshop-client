@@ -114,15 +114,18 @@
       },
 
       // 请求登陆
-      login () {
+      async login () {
         // 进行前台表单验证
         const {phone, code, name, pwd, captcha, loginWay} = this
+        let result
         if(loginWay) { // 短信登陆
           if(!this.isRightPhone) {
             return MessageBox.alert('必须输入一个正确的手机号')
           } else if (!/^\d{6}$/.test(code)) {
             return MessageBox.alert('必须输入6位数字')
           }
+          // 发送登陆请求
+          result = await reqSmsLogin(phone, code)
         } else { // 密码登陆
           if(!name.trim()) {
             return MessageBox.alert('必须输入用户名')
@@ -131,11 +134,19 @@
           } else if(captcha.length!==4) {
             return MessageBox.alert('必须输入4位的验证码')
           }
+          // 发送登陆请求
+          result = await reqPwdLogin({name, pwd, captcha})
         }
-
-        // 发送登陆请求
-
         // 根据结果做不同响应
+        if(result.code===0) {
+          const user = result.data
+          // 保存到state中去
+          this.$store.dispatch('saveUser', user)
+          // 跳转到个人中心
+          this.$router.replace('/profile')
+        } else {// 登陆失败
+          MessageBox.alert(result.msg)
+        }
       }
     }
   }
