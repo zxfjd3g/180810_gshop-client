@@ -92,18 +92,38 @@
         </div>
       </a>
     </section>
+
+    <section class="profile_my_order border-1px" v-if="user._id">
+      <mt-button type="danger" style="width: 100%" @click="logout">退出登陆</mt-button>
+    </section>
   </section>
 </template>
 
 <script>
   import {mapState} from 'vuex'
+  import {MessageBox} from 'mint-ui'
   import NavHeader from "../../components/NavHeader/NavHeader.vue";
+  import MtButton from "../../../node_modules/mint-ui/packages/button/src/button.vue";
 
   export default {
     computed: {
       ...mapState(['user'])
     },
-    components: {NavHeader}
+
+    methods: {
+      logout () {
+        MessageBox.confirm('确定退出吗?').then(action => {
+          console.log('----', action)
+          this.$store.dispatch('logout')
+        }).catch(action => {
+          console.log('++++', action)
+        })
+      }
+    },
+
+    components: {
+      MtButton,
+      NavHeader}
   }
 </script>
 
