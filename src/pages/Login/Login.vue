@@ -19,7 +19,7 @@
               </button>
             </section>
             <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码">
+              <input type="tel" maxlength="8" placeholder="验证码" v-model="code">
             </section>
             <section class="login_hint">
               温馨提示：未注册硅谷外卖帐号的手机号，登录时将自动注册，且代表已同意
@@ -29,22 +29,22 @@
           <div :class="{on: !loginWay}">
             <section>
               <section class="login_message">
-                <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
+                <input type="tel" maxlength="11" placeholder="用户名" v-model="name">
               </section>
               <section class="login_verification">
-                <input :type="isShowPwd ? 'text' : 'password'" maxlength="8" placeholder="密码">
+                <input :type="isShowPwd ? 'text' : 'password'" maxlength="8" placeholder="密码" v-model="pwd">
                 <div class="switch_button" :class="isShowPwd ? 'on' : 'off'" @click="isShowPwd=!isShowPwd">
                   <div class="switch_circle" :class="{right: isShowPwd}"></div>
                   <span class="switch_text">{{isShowPwd ? 'abc' : ''}}</span>
                 </div>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码">
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
                 <img ref="captcha" class="get_verification" src="http://localhost:5000/captcha" alt="captcha" @click="updateCaptcha">
               </section>
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit" @click.prevent="login">登录</button>
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
@@ -56,11 +56,17 @@
 </template>
 
 <script>
+  import {Toast, MessageBox} from 'mint-ui'
+  import {reqSendCode, reqSmsLogin, reqPwdLogin} from '../../api'
   export default {
     data () {
       return {
         loginWay: false, // true: 短信, false: 密码
         phone: '', // 手机号
+        code: '', // 短信验证码
+        name: '', // 用户名
+        pwd: '', // 密码
+        captcha: '', // 图形验证码
         computeTime: 0, // 倒计时剩余的时间, 单位秒
         isShowPwd: false, // 是否显示密码
       }
@@ -73,7 +79,8 @@
     },
 
     methods: {
-      sendCode () {
+      // 发送短信验证码
+      async sendCode () {
         // alert('---')
         // 显示最大的计时时间
         this.computeTime = 30
@@ -81,17 +88,54 @@
         const intervalId = setInterval(() => {
           this.computeTime--
           if(this.computeTime<=0) {
+            this.computeTime = 0
             // 停止倒计时
             clearInterval(intervalId)
           }
         }, 1000)
 
+        // 发ajax请求==> 发送验证码短信
+        const result = await reqSendCode(this.phone)
+        if(result.code===0) {// 验证码短信发送成功了
+          // alert('发送成功')
+          Toast('短信发送成功')
+        } else { // 验证码短信发送失败了
+          // 停止计时
+          this.computeTime = 0
+          // alert(result.msg)
+          MessageBox.alert(result.msg)
+        }
       },
 
       // 更新显示图形验证码
       updateCaptcha () {
         // 给img指定src, 携带时间戳参数 ==> 浏览器会自动再发请求获取新的验证码图片
         this.$refs.captcha.src = 'http://localhost:5000/captcha?time='+Date.now()
+      },
+
+      // 请求登陆
+      login () {
+        // 进行前台表单验证
+        const {phone, code, name, pwd, captcha, loginWay} = this
+        if(loginWay) { // 短信登陆
+          if(!this.isRightPhone) {
+            return MessageBox.alert('必须输入一个正确的手机号')
+          } else if (!/^\d{6}$/.test(code)) {
+            return MessageBox.alert('必须输入6位数字')
+          }
+        } else { // 密码登陆
+          if(!name.trim()) {
+            return MessageBox.alert('必须输入用户名')
+          } else if(!pwd.trim()) {
+            return MessageBox.alert('必须输入密码')
+          } else if(captcha.length!==4) {
+            return MessageBox.alert('必须输入4位的验证码')
+          }
+        }
+
+        // 发送登陆请求
+
+        // 根据结果做不同响应
       }
     }
   }
