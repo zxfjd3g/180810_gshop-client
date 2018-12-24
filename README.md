@@ -61,12 +61,18 @@
     
 # day03
 
-## 1. 分类轮播
-
+## 1. 异步显示分类轮播
+    通过vuex获取categorys数组(发请求, 读取)
+    对数据进行整合计算(一维变为特定的二维数组)
+    使用Swiper显示轮播, 如何在界面更新之后创建Swiper对象?
+        1). 使用watch+$nextTick()
+        2). 使用回调+$nextTick()	
+    使用svg图片实现loading的效果
+    
 ## 2. 登陆的前台效果
-    1). 两种登陆方式的切换
-    2). 手机号验证
-    3). 倒计时
-    4). 密码的显示/隐藏切换
+    1). 切换登陆方式: loginWay
+    2). 手机号验证: right_phone + isRightPhone计算属性
+    3). 倒计时效果: computeTime + setInterval()
+    4). 密码显示/隐藏的切换: isShowPwd + transition
 
 ## 3. 登陆的前后台交互效果
