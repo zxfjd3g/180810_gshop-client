@@ -40,7 +40,7 @@
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <img ref="captcha" class="get_verification" src="http://localhost:5000/captcha" alt="captcha" @click="updateCaptcha">
               </section>
             </section>
           </div>
@@ -59,7 +59,7 @@
   export default {
     data () {
       return {
-        loginWay: true, // true: 短信, false: 密码
+        loginWay: false, // true: 短信, false: 密码
         phone: '', // 手机号
         computeTime: 0, // 倒计时剩余的时间, 单位秒
         isShowPwd: false, // 是否显示密码
@@ -86,6 +86,12 @@
           }
         }, 1000)
 
+      },
+
+      // 更新显示图形验证码
+      updateCaptcha () {
+        // 给img指定src, 携带时间戳参数 ==> 浏览器会自动再发请求获取新的验证码图片
+        this.$refs.captcha.src = 'http://localhost:5000/captcha?time='+Date.now()
       }
     }
   }

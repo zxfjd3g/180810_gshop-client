@@ -58,7 +58,18 @@
     mounted () {
       // 异步获取商家列表数据(后台==>state)
       this.$store.dispatch('getShops')
-      this.$store.dispatch('getCategorys')
+      this.$store.dispatch('getCategorys',  () => { // 状态数据更新了
+        this.$nextTick(() => {
+          // 创建swiper对象的时机: 列表数据显示之后
+          new Swiper('.swiper-container', { // 配置对象
+            loop: true, // 循环轮播
+            // 如果需要分页器
+            pagination: {
+              el: '.swiper-pagination',
+            },
+          })
+        })
+      })
     /*  // 不太好
       setTimeout(() => {
         // 创建swiper对象的时机: 列表数据显示之后
@@ -106,7 +117,7 @@
 
     watch: {
       // 注意: vue在更新状态数据后 ==> 先调用监视的回调 ==> 异步更新界面
-      categorys () { // categorys重新赋值了, 有数据了(状态数据更新了)
+      /*categorys () { // categorys重新赋值了, 有数据了(状态数据更新了)
         // 将回调延迟到下次 DOM 更新循环之后执行。在修改数据之后立即使用它，然后等待 DOM 更新
         this.$nextTick(() => {
           // 创建swiper对象的时机: 列表数据显示之后
@@ -118,7 +129,7 @@
             },
           })
         })
-      }
+      }*/
     },
 
     components: {
