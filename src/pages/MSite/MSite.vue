@@ -2,11 +2,12 @@
   <section class="msite">
     <!--首页头部-->
     <NavHeader :title="address.name || '正在定位中...'">
-      <span class="header_search" slot="left">
+      <span class="header_search" slot="left" @click="$router.replace('/search')">
         <i class="iconfont icon-sousuo"></i>
       </span>
       <span class="header_login" slot="right">
-        <span class="header_login_text">登录|注册</span>
+        <span class="header_login_text" v-if="!user._id" @click="$router.push('/login')">登录|注册</span>
+        <i class="iconfont icon-person" v-else @click="$router.push('/userinfo')"></i>
       </span>
     </NavHeader>
     <!--首页导航-->
@@ -27,7 +28,7 @@
       </div>
 
       <img src="./images/msite_back.svg" alt="back" v-else>
-      
+
     </nav>
     <!--首页附近商家-->
     <div class="msite_shop_list">
@@ -46,19 +47,19 @@
   import {mapState} from 'vuex'
   import ShopList from '../../components/ShopList/ShopList.vue'
 
-/*
-解决swiper在vue中不能轮播的bug
-  watch: 监视状态数据更新了
-  $nextTick(() => {}): 界面更新了, 在回调函数中创建swiper对象
+  /*
+  解决swiper在vue中不能轮播的bug
+    watch: 监视状态数据更新了
+    $nextTick(() => {}): 界面更新了, 在回调函数中创建swiper对象
 
- */
+   */
 
   export default {
 
-    mounted () {
+    mounted() {
       // 异步获取商家列表数据(后台==>state)
       this.$store.dispatch('getShops')
-      this.$store.dispatch('getCategorys',  () => { // 状态数据更新了
+      this.$store.dispatch('getCategorys', () => { // 状态数据更新了
         this.$nextTick(() => {
           // 创建swiper对象的时机: 列表数据显示之后
           new Swiper('.swiper-container', { // 配置对象
@@ -70,23 +71,27 @@
           })
         })
       })
-    /*  // 不太好
-      setTimeout(() => {
-        // 创建swiper对象的时机: 列表数据显示之后
-        new Swiper('.swiper-container', { // 配置对象
-          loop: true, // 循环轮播
-          // 如果需要分页器
-          pagination: {
-            el: '.swiper-pagination',
-          },
-        })
-      }, 3000)
-      */
+      /*  // 不太好
+        setTimeout(() => {
+          // 创建swiper对象的时机: 列表数据显示之后
+          new Swiper('.swiper-container', { // 配置对象
+            loop: true, // 循环轮播
+            // 如果需要分页器
+            pagination: {
+              el: '.swiper-pagination',
+            },
+          })
+        }, 3000)
+        */
     },
 
     computed: {
-      ...mapState(['address', 'categorys']),
-      categorysArr () {
+      ...mapState({
+        address: state => state.msite.address,
+        categorys: state => state.msite.categorys,
+        user: state => state.user.user
+      }),
+      categorysArr() {
         const {categorys} = this
         // 二维数组
         const bigArr = []
@@ -97,7 +102,7 @@
         categorys.forEach(c => {
 
           // 将小数组保存到大数组(每个小数组只需要添加一次)
-          if(smallArr.length===0) {
+          if (smallArr.length === 0) {
             bigArr.push(smallArr)
           }
 
@@ -105,7 +110,7 @@
           smallArr.push(c)
 
           // 一旦小数组满了, 再准备一个新的小数组
-          if(smallArr.length===8) {
+          if (smallArr.length === 8) {
             smallArr = []
           }
         })
@@ -141,7 +146,7 @@
 <style lang="stylus" rel="stylesheet/stylus" scoped>
   @import "../../common/stylus/mixins.styl"
 
-  .msite  //首页
+  .msite //首页
     width 100%
     .msite_nav
       bottom-border-1px(#e4e4e4)
@@ -178,7 +183,7 @@
                 font-size 13px
                 color #666
         .swiper-pagination
-          >span.swiper-pagination-bullet-active
+          > span.swiper-pagination-bullet-active
             background #02a774
     .msite_shop_list
       top-border-1px(#e4e4e4)
