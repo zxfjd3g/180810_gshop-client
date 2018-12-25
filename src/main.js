@@ -7,6 +7,8 @@ import store from './store'
 import NavHeader from './components/NavHeader/NavHeader.vue'
 import Star from './components/Star/Star.vue'
 
+import './mock/mockServer'
+
 
 // 注册全局组件
 Vue.component('NavHeader', NavHeader)

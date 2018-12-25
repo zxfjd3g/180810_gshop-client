@@ -8,17 +8,28 @@ import actions from './actions'
 import getters from './getters'
 import msite from './modules/msite'
 import user from './modules/user'
+import shop from './modules/shop'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+export default new Vuex.Store({ // options
   modules: {
     msite,
-    user
+    user,
+    shop
   },
+  // state,
   actions,
   getters,
 })
+
+/*
+
+store.state = {
+  msite: options.modules.msite.state,
+  user: options.modules.user.state,
+}
+*/
 
 /*
 vuex管理的state的结构:
