@@ -4,7 +4,6 @@
 import Mock from 'mockjs'
 import data from './data.json'  // 已自动解析js对应的类型: 对象
 
-
 // goods的接口
 Mock.mock('/goods', {code: 0, data: data.goods})
 // ratings的接口

@@ -13,7 +13,6 @@
         </ul>
       </div>
 
-
       <div class="foods-wrapper">
         <ul>
           <li class="food-list-hook" v-for="(good, index) in goods" :key="index">
@@ -34,7 +33,7 @@
                     <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-                    CartControl组件
+                    <CartControl :food="food"/>
                   </div>
                 </div>
               </li>
@@ -47,16 +46,34 @@
 </template>
 
 <script>
+  import BScroll from 'better-scroll'
   import {mapState} from 'vuex'
+
   export default {
     mounted () {
-      this.$store.dispatch('getGoods')
+      this.$store.dispatch('getGoods', () => {
+        this.$nextTick(() => {
+          this._initScroll()
+        })
+      })
     },
 
     computed: {
       ...mapState({
         goods: state => state.shop.goods
       })
+    },
+
+    methods: {
+      _initScroll () {
+        new BScroll('.menu-wrapper', {
+          click: true
+        })
+        new BScroll('.foods-wrapper', {
+          // better-scroll 默认会阻止浏览器的原生 click 事件。当设置为 true，better-scroll 会派发一个 click 事件
+          click: true
+        })
+      }
     }
   }
 </script>
