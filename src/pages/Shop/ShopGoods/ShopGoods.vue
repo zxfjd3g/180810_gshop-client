@@ -19,7 +19,8 @@
           <li class="food-list-hook" v-for="(good, index) in goods" :key="index">
             <h1 class="title">{{good.name}}</h1>
             <ul>
-              <li class="food-item bottom-border-1px" v-for="(food, index) in good.foods" :key="index">
+              <li class="food-item bottom-border-1px" v-for="(food, index) in good.foods"
+                  :key="index" @click="showFood(food)">
                 <div class="icon">
                   <img width="57" height="57" :src="food.icon">
                 </div>
@@ -43,12 +44,16 @@
         </ul>
       </div>
     </div>
+    <!--标签对象就是组件对象-->
+    <Food ref="food" :food="food"/>
   </div>
 </template>
 
 <script>
   import BScroll from 'better-scroll'
   import {mapState} from 'vuex'
+  import Food from '../../../components/Food/Food.vue'
+  // import Food from 'components/Food/Food.vue'
 
   export default {
 
@@ -56,6 +61,7 @@
       return {
         scrollY: 0, // 右侧列表滑动的Y轴坐标  ==> 右侧滑动过程中不断改变
         tops: [], // 右侧所有分类li的top值  ==> 在列表第一次显示之后统计一次就可以(后面就不变了)
+        food: {}, // 需要显示的food
       }
     },
 
@@ -147,7 +153,19 @@
 
         // 让右侧列表滑动到对应的位置
         this.rightScroll.scrollTo(0, y, 300)
+      },
+
+      // 显示指定的food
+      showFood (food) {
+        // 更新food状态
+        this.food = food
+        // 显示food组件
+        this.$refs.food.toggleShow()
       }
+    },
+
+    components: {
+      Food
     }
   }
 </script>

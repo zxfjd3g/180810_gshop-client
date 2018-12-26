@@ -12,6 +12,7 @@ const state = {
   goods: [], // 商品列表
   ratings: [], // 商家评价列表
   info: {}, // 商家信息
+  cartFoods: [], // 购物车中food数组
 }
 const mutations = {
   [RECEIVE_INFO](state, {info}) {
@@ -32,6 +33,9 @@ const mutations = {
       // food.count = 1
       // 向响应式对象中添加一个属性，并确保这个新属性同样是响应式的
       Vue.set(food, 'count', 1)
+      // 将food添加到购物车中
+      state.cartFoods.push(food)
+
     } else {
       // 给food已有的属性值增加1
       food.count++
@@ -42,6 +46,11 @@ const mutations = {
   [REDUCE_FOOD_COUNT] (state, {food}) {
     if(food.count>0) {
       food.count--
+
+      if(food.count===0) {
+        // 将food从购物车中删除
+        state.cartFoods.splice(state.cartFoods.indexOf(food), 1)
+      }
     }
   },
 
@@ -81,7 +90,19 @@ const actions = {
     }
   }
 }
-const getters = {}
+const getters = {
+  /*cartFoods (state) {
+    const foods = []
+    state.goods.forEach(good => {
+      good.foods.forEach(food => {
+        if(food.count>0) {
+          foods.push(food)
+        }
+      })
+    })
+    return foods
+  }*/
+}
 
 export default {
   state,
