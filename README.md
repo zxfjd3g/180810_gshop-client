@@ -131,18 +131,15 @@
           ajax请求函数
           接口请求函数
         vuex
-          state
-          mutation-types
-          actions
-          mutations
+          modules/shop.js
         组件
           dispatch(): 异步获取后台数据到vuex的state
           mapState(): 从vuex的state中读取对应的数据
           模板中显示
     2). 初始显示异常
-        情况: Cannot read property 'xxx' of null"
-          原因: 初始值是空对象, 内部没有数据, 而模块中直接显示3层表达式
-          解决: 使用v-if指令
+        情况: Cannot read property 'xxx' of undefined"
+        原因: 初始值是空对象, 内部没有数据, 而模块中直接显示3层表达式
+        解决: 使用v-if指令
     3). vue transition动画
         <transition name="xxx">
         xxx-enter-active / xxx-leave-active
@@ -166,3 +163,13 @@
         Vue.set(obj, 'xxx', value)才有数据绑定
         this.$set(obj, 'xxx', value)才有数据绑定
     2). vue transition
+    
+# day05
+
+## 1. ShopGoods组件的滑动功能
+
+## 2. Food组件
+
+## 3. ShopCart组件
+
+## 4. ShopRatings组件

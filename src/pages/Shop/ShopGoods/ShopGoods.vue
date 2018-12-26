@@ -4,7 +4,7 @@
       <div class="menu-wrapper">
         <ul>
           <!--current-->
-          <li class="menu-item" v-for="(good, index) in goods" :key="index">
+          <li class="menu-item" v-for="(good, index) in goods" :key="index" :class="{current: currentIndex===index}">
             <span class="text bottom-border-1px">
               <img class="icon" :src="good.icon" v-if="good.icon">
               {{good.name}}
@@ -14,7 +14,7 @@
       </div>
 
       <div class="foods-wrapper">
-        <ul>
+        <ul ref="goodsUl">
           <li class="food-list-hook" v-for="(good, index) in goods" :key="index">
             <h1 class="title">{{good.name}}</h1>
             <ul>
@@ -50,10 +50,19 @@
   import {mapState} from 'vuex'
 
   export default {
+
+    data () {
+      return {
+        scrollY: 0, // 右侧列表滑动的Y轴坐标  ==> 右侧滑动过程中不断改变
+        tops: [], // 右侧所有分类li的top值  ==> 在列表第一次显示之后统计一次就可以(后面就不变了)
+      }
+    },
+
     mounted () {
       this.$store.dispatch('getGoods', () => {
         this.$nextTick(() => {
           this._initScroll()
+          this._initTops()
         })
       })
     },
@@ -61,7 +70,18 @@
     computed: {
       ...mapState({
         goods: state => state.shop.goods
-      })
+      }),
+
+      // 当前分类的下标
+      currentIndex () {
+        const {scrollY, tops} = this
+        // [0, 5, 7, 13]
+        return tops.findIndex((top, index) => {
+
+          // scrollY在[top, nextTop)区间内
+          return  scrollY>=top && scrollY<tops[index+1]
+        })
+      }
     },
 
     methods: {
@@ -69,10 +89,40 @@
         new BScroll('.menu-wrapper', {
           click: true
         })
-        new BScroll('.foods-wrapper', {
+        const rightScroll = new BScroll('.foods-wrapper', {
           // better-scroll 默认会阻止浏览器的原生 click 事件。当设置为 true，better-scroll 会派发一个 click 事件
-          click: true
+          click: true,
+          probeType: 1, // 非实时(每隔一定时间才) ,触摸
+          // probeType: 2, // 实时,触摸
+         // probeType: 3, // 实时,触摸/惯性
         })
+
+        // 监视右侧列表的滑动
+        rightScroll.on('scroll', ({x, y}) => {
+          console.log('scroll', x, y)
+          this.scrollY = Math.abs(y)
+        })
+
+        // 监视右侧列表滑动结束
+        rightScroll.on('scrollEnd', ({x, y}) => {
+          console.log('scrollEnd', x, y)
+          this.scrollY = Math.abs(y)
+        })
+      },
+
+      _initTops () {
+        // 收集右侧所有分类li的top值
+        const tops = []
+        let top = 0
+        tops.push(top)
+        const lis = this.$refs.goodsUl.children
+        Array.prototype.slice.call(lis).forEach(li => {
+          top += li.clientHeight
+          tops.push(top)
+        })
+        // 更新tops状态
+        this.tops = tops
+        console.log('tops', tops)
       }
     }
   }
