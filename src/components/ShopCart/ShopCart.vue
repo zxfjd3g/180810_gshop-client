@@ -19,7 +19,7 @@
         </div>
       </div>
       <transition name="move">
-        <div class="shopcart-list" v-show="listShow">
+        <div class="shopcart-list" v-if="listShow">
           <div class="list-header">
             <h1 class="title">购物车</h1>
             <span class="empty">清空</span>
@@ -46,8 +46,8 @@
 </template>
 
 <script>
+  import BScroll from 'better-scroll'
   import {mapState, mapGetters} from 'vuex'
-
   export default {
 
     data () {
@@ -83,12 +83,29 @@
 
       // 判断列表是否需要显示
       listShow () {
-        // console.log('listShow()')
+        console.log('listShow()')
         let {totalCount} = this
         if(totalCount===0) {
           // 一旦没有数量, 设定isShow为false
           this.isShow = false
           return false
+        }
+
+        if(this.isShow) {// 将要显示了
+          this.$nextTick(() => {
+            /*
+            单例对象
+            1. 创建前: 判断对象不存在
+            2. 创建后, 保存创建的对象
+             */
+            if(!this.scroll) { // 如果scroll还不存在, 创建并保存
+              this.scroll = new BScroll('.list-content', {
+                click: true
+              }) // 内部给内容标签ul添加style属性
+            } else { // 如果已经存在, 通知scroll对象刷新(重新计算, 看是否需要形成滑动)
+              this.scroll.refresh()
+            }
+          })
         }
 
         return this.isShow

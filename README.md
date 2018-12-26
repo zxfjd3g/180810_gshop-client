@@ -182,5 +182,3 @@
 ## 2. Food组件
 
 ## 3. ShopCart组件
-
-## 4. ShopRatings组件
