@@ -2,9 +2,10 @@
   <div>
     <div class="goods">
       <div class="menu-wrapper">
-        <ul>
+        <ul ref="leftUl">
           <!--current-->
-          <li class="menu-item" v-for="(good, index) in goods" :key="index" :class="{current: currentIndex===index}">
+          <li class="menu-item" v-for="(good, index) in goods" :key="index"
+              :class="{current: currentIndex===index}" @click="clickItem(index)">
             <span class="text bottom-border-1px">
               <img class="icon" :src="good.icon" v-if="good.icon">
               {{good.name}}
@@ -14,7 +15,7 @@
       </div>
 
       <div class="foods-wrapper">
-        <ul ref="goodsUl">
+        <ul ref="rightUl">
           <li class="food-list-hook" v-for="(good, index) in goods" :key="index">
             <h1 class="title">{{good.name}}</h1>
             <ul>
@@ -76,35 +77,45 @@
       currentIndex () {
         const {scrollY, tops} = this
         // [0, 5, 7, 13]
-        return tops.findIndex((top, index) => {
+        const index = tops.findIndex((top, index) => {
 
           // scrollY在[top, nextTop)区间内
           return  scrollY>=top && scrollY<tops[index+1]
         })
+
+        if(index!=this.index && this.leftScroll) { // 产生了一个新的index
+          // 保存新的index
+          this.index = index
+          // 当currentIndex发生改变时,将左侧列表进行编码滑动(尽量让当前分类滑动到最上面)
+          const li = this.$refs.leftUl.children[index]
+          this.leftScroll.scrollToElement(li, 300)
+        }
+
+        return index
       }
     },
 
     methods: {
       _initScroll () {
-        new BScroll('.menu-wrapper', {
+        this.leftScroll = new BScroll('.menu-wrapper', {
           click: true
         })
-        const rightScroll = new BScroll('.foods-wrapper', {
+        this.rightScroll = new BScroll('.foods-wrapper', {
           // better-scroll 默认会阻止浏览器的原生 click 事件。当设置为 true，better-scroll 会派发一个 click 事件
           click: true,
           probeType: 1, // 非实时(每隔一定时间才) ,触摸
           // probeType: 2, // 实时,触摸
-         // probeType: 3, // 实时,触摸/惯性
+         // probeType: 3, // 实时,触摸/惯性/编码
         })
 
         // 监视右侧列表的滑动
-        rightScroll.on('scroll', ({x, y}) => {
+        this.rightScroll.on('scroll', ({x, y}) => {
           console.log('scroll', x, y)
           this.scrollY = Math.abs(y)
         })
 
         // 监视右侧列表滑动结束
-        rightScroll.on('scrollEnd', ({x, y}) => {
+        this.rightScroll.on('scrollEnd', ({x, y}) => {
           console.log('scrollEnd', x, y)
           this.scrollY = Math.abs(y)
         })
@@ -115,7 +126,7 @@
         const tops = []
         let top = 0
         tops.push(top)
-        const lis = this.$refs.goodsUl.children
+        const lis = this.$refs.rightUl.children
         Array.prototype.slice.call(lis).forEach(li => {
           top += li.clientHeight
           tops.push(top)
@@ -123,6 +134,19 @@
         // 更新tops状态
         this.tops = tops
         console.log('tops', tops)
+      },
+
+      // 点击了左侧某个分类项
+      clickItem (index) {
+
+        // 得到目标位置的坐标
+        const y = -this.tops[index]
+
+        // 立即将目标坐标保存给scrollY
+        this.scrollY = Math.abs(y)
+
+        // 让右侧列表滑动到对应的位置
+        this.rightScroll.scrollTo(0, y, 300)
       }
     }
   }
