@@ -10,6 +10,7 @@ import CartControl from './components/CartControl/CartControl.vue'
 import Split from './components/Split/Split.vue'
 
 import './mock/mockServer'
+import './filters'
 
 
 // 注册全局组件

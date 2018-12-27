@@ -26,7 +26,10 @@
 
       <Split/>
 
-      <RatingsFilter/>
+      <RatingsFilter :selectType="selectType"
+                     :onlyContent="onlyContent"
+                      @setSelectType="setSelectType"
+                      @toggleOnlyContent="toggleOnlyContent"/>
 
       <div class="rating-wrapper">
         <ul>
@@ -45,7 +48,7 @@
                 <span class="iconfont" :class="rating.rateType===0?'icon-thumb_up':'icon-thumb_down'"></span>
                 <span class="item" v-for="(item, index) in rating.recommend" :key="index">{{item}}</span>
               </div>
-              <div class="time">{{rating.rateTime}}</div>
+              <div class="time">{{rating.rateTime | date-format}}</div>
             </div>
           </li>
         </ul>
@@ -110,6 +113,16 @@
 
           return (selectType===2 || selectType===rateType) && (!onlyContent || text.length>0)
         })
+      }
+    },
+
+    methods: {
+      setSelectType (selectType) {
+        this.selectType = selectType
+      },
+
+      toggleOnlyContent () {
+        this.onlyContent = !this.onlyContent
       }
     },
 
