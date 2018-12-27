@@ -105,7 +105,7 @@ export default [
     ]
   },
 
-  { // 配置404组件
+  { // 配置404组件, 放在最后
     path: '/*',
     component: NotFound
   },
