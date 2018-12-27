@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import {Button} from 'mint-ui'
+import VueLazyload from 'vue-lazyload'
+
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -9,8 +11,13 @@ import Star from './components/Star/Star.vue'
 import CartControl from './components/CartControl/CartControl.vue'
 import Split from './components/Split/Split.vue'
 
+import loading from './common/imgs/loading.gif'
 import './mock/mockServer'
 import './filters'
+
+Vue.use(VueLazyload, {
+  loading
+})  // 内部定义了一个全局指令: lazy
 
 
 // 注册全局组件

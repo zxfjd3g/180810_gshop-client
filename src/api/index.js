@@ -5,7 +5,8 @@
 import ajax from './ajax'
 
 // const BASE = 'http://localhost:5000'
-const BASE = '/api'  // 开发环境下需要使用代理帮我们转发请求
+// const BASE = '/api'  // 开发环境下需要使用代理帮我们转发请求
+const BASE = ''
 
 // [1、根据经纬度获取位置详情](#1根据经纬度获取位置详情)<br/>
 /*export function reqAddress(longitude, latitude) {
