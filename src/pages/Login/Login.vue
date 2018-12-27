@@ -148,6 +148,23 @@
           MessageBox.alert(result.msg)
         }
       }
+    },
+
+    // 功能: 进入登陆界面时, 如果已经登陆了自动跳转到个人中心
+    // 在当前组件对象被创建前调用, 不能直接访问this(不是组件对象)
+    // 但可以通过next(component => {}), 在回调函数中访问组件对象
+    beforeRouteEnter (to, from, next) {
+      console.log('Login beforeRouteEnter()', this)
+      next((component) => {
+        const userid = component.$store.state.user.user._id
+        if(userid) {
+          // 已经登陆, 强制跳转到个人中心
+          next('/profile')
+        } else {
+          // 没登陆, 放行
+          next()
+        }
+      })
     }
   }
 </script>

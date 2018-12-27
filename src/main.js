@@ -27,6 +27,9 @@ Vue.component('CartControl', CartControl)
 Vue.component('Split', Split)
 Vue.component(Button.name, Button)
 
+// 将store保存到Vue函数对象上
+Vue.store = store
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
